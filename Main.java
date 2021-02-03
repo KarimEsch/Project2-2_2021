@@ -1,15 +1,17 @@
-package com.company;
+package Main;
+
 
 
 
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
-public class Main extends Application {
+class Main extends Application {
 
 
     public Group pane = new Group();
@@ -37,13 +39,21 @@ public class Main extends Application {
     }
     public void displayHomePage() {
 
-                Rectangle rect = new Rectangle(100,  100, 600, 600);
-                rect.setStroke(Color.BLACK);
-                rect.setStrokeWidth(3);
+        Rectangle rect = new Rectangle(100,  100, 600, 600);
+        rect.setStroke(Color.BLACK);
+        rect.setStrokeWidth(3);
 
-                rect.setFill(Color.rgb(200, 200, 200,1.0));
+        rect.setFill(Color.rgb(200, 200, 200,1.0));
+        Button ask = new Button("Ask a request");
+        ask.setTranslateX(350);
+        ask.setTranslateY(630);
+        ask.setOnAction((event) -> {
+            System.out.println("Button clicked!");
+        });
 
-                pane.getChildren().add(rect);
+        ask.setStyle("-fx-background-color: #4c3783; ");
+        pane.getChildren().add(rect);
+        pane.getChildren().add(ask);
 
 
 
