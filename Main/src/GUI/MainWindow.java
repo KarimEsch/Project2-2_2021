@@ -22,6 +22,7 @@ public class MainWindow extends Application {
 
     public Group pane = new Group();
     Processor processor = new Processor();
+    Skills currentSkills = new Skills();
 
     @Override
     public void start(Stage primaryStage) {
@@ -69,8 +70,8 @@ public class MainWindow extends Application {
         pane.getChildren().add(imageView);
 
         Button ask = new Button("Ask a request");
-        Button addSkill = new Button("Add skill");
-        Button saveSkill = new Button("Save skill");
+        Button loadSkills = new Button("Load skill");
+        Button saveSkills = new Button("Save skill");
         TextField request = new TextField();
         TextArea chat = new TextArea("Chat with your Personal Assistant \n");
         chat.setOpacity(0.85);
@@ -79,39 +80,44 @@ public class MainWindow extends Application {
         chat.setMinHeight(413);
         chat.setMaxHeight(500);
         chat.setMaxWidth(440);
-        addSkill.setTranslateX(140);
-        addSkill.setTranslateY(498);
-        saveSkill.setTranslateX(400);
-        saveSkill.setTranslateY(498);
+        loadSkills.setTranslateX(140);
+        loadSkills.setTranslateY(498);
+        saveSkills.setTranslateX(400);
+        saveSkills.setTranslateY(498);
         request.setPromptText("write your request here ...");
         request.setTranslateX(226);
         request.setTranslateY(498);
         ask.setTranslateX(260);
         ask.setTranslateY(465);
         ask.setOnAction((event) -> {
-            pane.getChildren().add(addSkill);
-            pane.getChildren().add(saveSkill);
+            pane.getChildren().add(loadSkills);
+            pane.getChildren().add(saveSkills);
             pane.getChildren().add(request);
             pane.getChildren().add(chat);
 
         });
+
+        saveSkills.setOnAction((event) -> {
+            currentSkills.writeSkill(request.getText());
+        });
+
+        loadSkills.setOnAction((event) -> {
+            currentSkills.getCurrentSkills();
+        });
+
         request.setOnKeyPressed(ke -> {
             if (ke.getCode().equals(KeyCode.ENTER))
             {
                 System.out.println("_you entered a request");
                 String text = request.getText();
                 processor.proceed(text,chat);
+                currentSkills.readCurrentSkills();
             }
         });
         ask.setStyle("-fx-background-color: #9a989f; ");
         pane.getChildren().add(ask);
 
 
-
     }
-
-
-
-
 
 }
