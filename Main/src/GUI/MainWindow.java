@@ -2,17 +2,18 @@ package GUI;
 
 
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
@@ -20,10 +21,10 @@ public class MainWindow extends Application {
 
 
     public Group pane = new Group();
+    Processor processor = new Processor();
 
     @Override
     public void start(Stage primaryStage) {
-
         displayHomePage();
         int WIDTH = 600;
         int HEIGHT = 550;
@@ -68,18 +69,40 @@ public class MainWindow extends Application {
         pane.getChildren().add(imageView);
 
         Button ask = new Button("Ask a request");
+        Button addSkill = new Button("Add skill");
+        Button saveSkill = new Button("Save skill");
+        TextField request = new TextField();
+        TextArea chat = new TextArea("Chat with your Personal Assistant \n");
+        chat.setOpacity(0.85);
+        chat.setTranslateX(80);
+        chat.setTranslateY(50);
+        chat.setMinHeight(413);
+        chat.setMaxHeight(500);
+        chat.setMaxWidth(440);
+        addSkill.setTranslateX(140);
+        addSkill.setTranslateY(498);
+        saveSkill.setTranslateX(400);
+        saveSkill.setTranslateY(498);
+        request.setPromptText("write your request here ...");
+        request.setTranslateX(226);
+        request.setTranslateY(498);
         ask.setTranslateX(260);
         ask.setTranslateY(465);
         ask.setOnAction((event) -> {
-            System.out.println("Button clicked!");
-            TextField request = new TextField();
-            request.setPromptText("write your request here ...");
-            request.setTranslateX(226);
-            request.setTranslateY(498);
+            pane.getChildren().add(addSkill);
+            pane.getChildren().add(saveSkill);
             pane.getChildren().add(request);
+            pane.getChildren().add(chat);
 
         });
-
+        request.setOnKeyPressed(ke -> {
+            if (ke.getCode().equals(KeyCode.ENTER))
+            {
+                System.out.println("_you entered a request");
+                String text = request.getText();
+                processor.proceed(text,chat);
+            }
+        });
         ask.setStyle("-fx-background-color: #9a989f; ");
         pane.getChildren().add(ask);
 
