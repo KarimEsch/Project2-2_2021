@@ -5,9 +5,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -20,11 +18,17 @@ import javafx.stage.Stage;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
 
 public class MainWindow extends Application {
     int WIDTH = 1000;
     int HEIGHT = 600;
+
+    private List<Label> messages = new ArrayList<>();
+    private int index = 0;
 
     public Group pane = new Group();
     Scene scene = new Scene(pane , WIDTH, HEIGHT);
@@ -41,7 +45,9 @@ public class MainWindow extends Application {
     Button loadSkills = new Button("Load skill");
     Button saveSkills = new Button("Save skill");
     TextField request = new TextField();
-    TextField userDiscussion = new TextField();
+    TextField da = new TextField();
+    //VBox chatbox = new VBox(5);
+    //ScrollPane container = new ScrollPane();
     TextArea chat = new TextArea("Chat with your Personal Assistant \n");
 
     @Override
@@ -54,8 +60,8 @@ public class MainWindow extends Application {
         CurrentTime.setStyle("-fx-font-size: 20px;");
         CurrentTime.setTranslateX(50);
         CurrentTime.setTranslateY(45);
-        //Creating an image
 
+        //Creating an image
         image1 = new Image(new FileInputStream("Main/res/MainScreen.png"));
         image2 = new Image(new FileInputStream("Main/res/logo.png"));
 
@@ -81,7 +87,6 @@ public class MainWindow extends Application {
 
         pane.getChildren().add(imageView1);
         pane.getChildren().add(imageView2);
-
         pane.getChildren().add(CurrentTime);
 
         InputText.setTranslateX(570);
@@ -91,9 +96,9 @@ public class MainWindow extends Application {
         InputText.setFill(Color.GRAY);
         InputText.setOpacity(0.7);
 
-        userDiscussion.setTranslateX(680);
-        userDiscussion.setTranslateY(493);
-        userDiscussion.setPromptText("Ask a request here ...");
+        da.setTranslateX(680);
+        da.setTranslateY(493);
+        da.setPromptText("Digital assistant reply");
 
         //Chat Area
         chat.setOpacity(0.85);
@@ -102,38 +107,51 @@ public class MainWindow extends Application {
         chat.setMinHeight(413);
         chat.setMaxHeight(500);
         chat.setMaxWidth(400);
+
         //Button to load skills
-        loadSkills.setTranslateX(140);
-        loadSkills.setTranslateY(498);
+        loadSkills.setTranslateX(120);
+        loadSkills.setTranslateY(500);
         saveSkills.setTranslateX(400);
-        saveSkills.setTranslateY(498);
+        saveSkills.setTranslateY(500);
         saveSkills.setOnAction((event) -> currentSkills.writeSkill(request.getText()));
 
-        loadSkills.setOnAction((event) -> currentSkills.getCurrentSkills());
+        loadSkills.setOnAction((event) ->{
+            currentSkills.readCurrentSkills();
+            currentSkills.getCurrentSkills();
+        }
+        );
 
         request.setPromptText("Load or Save Skills ...");
-        request.setTranslateX(226);
-        request.setTranslateY(498);
+        request.setTranslateX(207);
+        request.setTranslateY(500);
         request.setOnKeyPressed(ke -> {
             if (ke.getCode().equals(KeyCode.ENTER))
             {
                 System.out.println("_you entered a request");
                 String text = request.getText();
                 processor.proceed(text,chat);
-                currentSkills.readCurrentSkills();
+            }
+        });
+        da.setOnKeyPressed(ke -> {
+            if (ke.getCode().equals(KeyCode.ENTER))
+            {
+                System.out.println("_you entered a request");
+                String text = da.getText();
+                processor.digitalproceed(text,chat);
             }
         });
 
-        ask.setTranslateX(220);
+        ask.setTranslateX(199);
         ask.setTranslateY(465);
-        ask.setStyle("-fx-background-color: #9a989f; ");
+        //ask.setStyle("-fx-background-color: #9a989f; ");
         ask.setOnAction((event) -> {
+            pane.getChildren().remove(ask);
             pane.getChildren().add(loadSkills);
             pane.getChildren().add(saveSkills);
             pane.getChildren().add(request);
             pane.getChildren().add(chat);
             pane.getChildren().add(InputText);
-            pane.getChildren().add(userDiscussion);
+            pane.getChildren().add(da);
 
         });
 
