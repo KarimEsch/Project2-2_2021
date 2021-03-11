@@ -1,11 +1,13 @@
 package GUI;
 
-
+import Processing.CalendarParser;
+import Processing.JSONReadFromFile;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -22,6 +24,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+
 public class MainWindow extends Application {
     int WIDTH = 1000;
     int HEIGHT = 600;
@@ -30,10 +33,15 @@ public class MainWindow extends Application {
     Scene scene = new Scene(pane , WIDTH, HEIGHT);
     Processor processor = new Processor();
     Skills currentSkills = new Skills();
+    String calendarURL = "https://timetable.maastrichtuniversity.nl/ical?6036559f&group=false&eu=STYyMDI3ODk=&h=NpyZVI3VJzLSITMkDIq3esF0eirFqGdG3s2ZATBbazo=";
+    CalendarParser calendarParser = new CalendarParser();
+
+    JSONReadFromFile jsonReader = new JSONReadFromFile("skills.json");
 
     Image image1;
     Image image2;
 
+    Label chatTitle = new Label("Chat with your Personal Assistant");
     Text CurrentTime = new Text();
     Rectangle InputText = new Rectangle();
 
@@ -42,11 +50,12 @@ public class MainWindow extends Application {
     Button saveSkills = new Button("Save skill");
     TextField request = new TextField();
     TextField userDiscussion = new TextField();
-    TextArea chat = new TextArea("Chat with your Personal Assistant \n");
+    TextArea chat = new TextArea();
 
     @Override
     public void start(Stage primaryStage) throws IOException{
 
+        jsonReader.parseSkills();
 
         //Text CurrentTime = new Text(dtf.format(now));
         CurrentTime.setFill(Color.WHITE);
@@ -91,6 +100,12 @@ public class MainWindow extends Application {
         InputText.setFill(Color.GRAY);
         InputText.setOpacity(0.7);
 
+        chatTitle.setTextFill(Color.WHITE);
+        chatTitle.setFont(javafx.scene.text.Font.font(null, FontWeight.BOLD, 20));
+        chatTitle.setStyle("-fx-font-size: 20px;");
+        chatTitle.setTranslateX(630);
+        chatTitle.setTranslateY(27);
+
         userDiscussion.setTranslateX(680);
         userDiscussion.setTranslateY(493);
         userDiscussion.setPromptText("Ask a request here ...");
@@ -124,7 +139,7 @@ public class MainWindow extends Application {
             }
         });
 
-        ask.setTranslateX(220);
+        ask.setTranslateX(223);
         ask.setTranslateY(465);
         ask.setStyle("-fx-background-color: #9a989f; ");
         ask.setOnAction((event) -> {
@@ -134,6 +149,7 @@ public class MainWindow extends Application {
             pane.getChildren().add(chat);
             pane.getChildren().add(InputText);
             pane.getChildren().add(userDiscussion);
+            pane.getChildren().add(chatTitle);
 
         });
 
