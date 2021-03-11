@@ -16,6 +16,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -107,6 +108,7 @@ public class MainWindow extends Application {
         chat.setMinHeight(413);
         chat.setMaxHeight(500);
         chat.setMaxWidth(400);
+        chat.appendText("Hi there! Ask me a question!");
 
         //Button to load skills
         loadSkills.setTranslateX(120);
@@ -137,7 +139,12 @@ public class MainWindow extends Application {
             {
                 System.out.println("_you entered a request");
                 String text = da.getText();
-                processor.digitalproceed(text,chat);
+                processor.proceed(text, chat);
+                try {
+                    processor.digitalproceed(text,chat);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -186,5 +193,7 @@ public class MainWindow extends Application {
         timerThread.start();//start the thread and its ok
     }
 
-
+    public Text getCurrentTime() {
+        return CurrentTime;
+    }
 }
