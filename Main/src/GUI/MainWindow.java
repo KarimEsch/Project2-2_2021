@@ -13,28 +13,26 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 
 public class MainWindow extends Application {
-    int WIDTH = 1000;
-    int HEIGHT = 600;
 
-    private List<Label> messages = new ArrayList<>();
-    private int index = 0;
-
-    public Group pane = new Group();
-    Scene scene = new Scene(pane , WIDTH, HEIGHT);
+    Group pane = new Group();
+    Group secondaryLayout = new Group();
+    Scene scene = new Scene(pane, 1000, 600);
+    Scene secondScene = new Scene(secondaryLayout, 650, 150);
+    Stage newWindow = new Stage();
     Processor processor = new Processor();
     Skills currentSkills = new Skills();
+
 
     Image image1;
     Image image2;
@@ -45,15 +43,22 @@ public class MainWindow extends Application {
     Button ask = new Button("Interact With your Assistant");
     Button loadSkills = new Button("Load skill");
     Button saveSkills = new Button("Save skill");
+    Button newSkill = new Button("New Skill");
     TextField request = new TextField();
     TextField da = new TextField();
-    //VBox chatbox = new VBox(5);
-    //ScrollPane container = new ScrollPane();
+
+    Label question = new Label("Question : ");
+    Button save = new Button("Save");
+    TextField q = new TextField();
+    Label action = new Label("Action : ");
+    TextField a = new TextField();
+    TextField s1 = new TextField();
+    TextField s2 = new TextField();
+    TextField s3 = new TextField();
     TextArea chat = new TextArea("Chat with your Personal Assistant \n");
 
     @Override
-    public void start(Stage primaryStage) throws IOException{
-
+    public void start(Stage primaryStage) throws IOException {
 
         //Text CurrentTime = new Text(dtf.format(now));
         CurrentTime.setFill(Color.WHITE);
@@ -108,43 +113,87 @@ public class MainWindow extends Application {
         chat.setMinHeight(413);
         chat.setMaxHeight(500);
         chat.setMaxWidth(400);
-        chat.appendText("Hi there! Ask me a question!");
 
-        //Button to load skills
+        //Button to load/save/new skills
         loadSkills.setTranslateX(120);
         loadSkills.setTranslateY(500);
         saveSkills.setTranslateX(400);
         saveSkills.setTranslateY(500);
+        newSkill.setTranslateX(260);
+        newSkill.setTranslateY(550);
         saveSkills.setOnAction((event) -> currentSkills.writeSkill(request.getText()));
 
-        loadSkills.setOnAction((event) ->{
-            currentSkills.readCurrentSkills();
-            currentSkills.getCurrentSkills();
-        }
+        loadSkills.setOnAction((event) -> {
+                    currentSkills.readCurrentSkills();
+                    currentSkills.getCurrentSkills();
+                }
         );
+
+        newSkill.setOnAction((event) -> {
+
+                    question.setTranslateX(10);
+                    question.setTranslateY(50);
+                    q.setTranslateX(100);
+                    q.setTranslateY(50);
+                    q.setPrefWidth(500);
+
+                    q.setOnKeyPressed(e -> {
+                        if (e.getCode().equals(KeyCode.ENTER)) {
+                            newWindow.setHeight(400);
+                            countArrow(q.getText(), secondaryLayout, save, action, a, s1, s2, s3);
+                        }
+                    });
+
+
+                    action.setVisible(false);
+                    action.setTranslateX(10);
+                    a.setVisible(false);
+                    a.setTranslateX(100);
+                    a.setPrefWidth(500);
+
+                    save.setTranslateX(300);
+                    save.setVisible(false);
+
+                    secondaryLayout.getChildren().add(question);
+                    secondaryLayout.getChildren().add(action);
+                    secondaryLayout.getChildren().add(q);
+                    secondaryLayout.getChildren().add(a);
+                    secondaryLayout.getChildren().add(save);
+
+                    newWindow.setTitle("New skill");
+                    newWindow.setScene(secondScene);
+                    newWindow.initModality(Modality.WINDOW_MODAL);
+                    newWindow.initOwner(primaryStage);
+                    newWindow.show();
+                }
+        );
+
+        save.setOnAction(E -> {
+            try {
+                FileWriter myfile = new FileWriter("Main/res/newSkills.txt",true);
+                myfile.write(s1.getText()+" "+s2.getText()+" "+s3.getText()+" "+ a.getText()+"\n");
+                myfile.close();
+                System.out.println("Successfully wrote to the file.");
+            } catch (IOException e) {
+                System.out.println("An error occurred.");
+            }
+        });
 
         request.setPromptText("Load or Save Skills ...");
         request.setTranslateX(207);
         request.setTranslateY(500);
         request.setOnKeyPressed(ke -> {
-            if (ke.getCode().equals(KeyCode.ENTER))
-            {
-                System.out.println("_you entered a request");
+            if (ke.getCode().equals(KeyCode.ENTER)) {
+                System.out.println("You entered a request");
                 String text = request.getText();
-                processor.proceed(text,chat);
+                processor.proceed(text, chat);
             }
         });
         da.setOnKeyPressed(ke -> {
-            if (ke.getCode().equals(KeyCode.ENTER))
-            {
-                System.out.println("_you entered a request");
+            if (ke.getCode().equals(KeyCode.ENTER)) {
+                System.out.println("You entered a request");
                 String text = da.getText();
-                processor.proceed(text, chat);
-                try {
-                    processor.digitalproceed(text,chat);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
+                processor.digitalproceed(text, chat);
             }
         });
 
@@ -155,6 +204,7 @@ public class MainWindow extends Application {
             pane.getChildren().remove(ask);
             pane.getChildren().add(loadSkills);
             pane.getChildren().add(saveSkills);
+            pane.getChildren().add(newSkill);
             pane.getChildren().add(request);
             pane.getChildren().add(chat);
             pane.getChildren().add(InputText);
@@ -191,9 +241,87 @@ public class MainWindow extends Application {
             }
         });
         timerThread.start();//start the thread and its ok
+
+
     }
 
-    public Text getCurrentTime() {
-        return CurrentTime;
+    //Counts the number of slots required and makes that number of labels and text fields.
+    public static void countArrow(String text, Group secondaryLayout, Button save, Label action, TextField a, TextField s1, TextField s2, TextField s3) {
+        int count = 0;
+
+        for (int i = 0; i < text.length(); i++) {
+            if (text.charAt(i) == '<' || text.charAt(i) == '>')
+                count++;
+            //System.out.println(count);
+        }
+
+        if (count % 2 == 0) {
+            count = count / 2;
+            //System.out.println(count);
+        }
+        Label slot1 = new Label("Slot1 : ");
+        Label slot2 = new Label("Slot2 : ");
+        Label slot3 = new Label("Slot3 : ");
+
+
+
+        switch(count){
+            case 1:
+                slot1.setTranslateX(200);
+                slot1.setTranslateY(100);
+
+                s1.setTranslateX(250);
+                s1.setTranslateY(100);
+
+                action.setTranslateY(150);
+                a.setTranslateY(150);
+                save.setTranslateY(200);
+                secondaryLayout.getChildren().addAll(slot1,s1);
+                break;
+
+            case 2:
+                slot1.setTranslateX(200);
+                slot1.setTranslateY(100);
+                slot2.setTranslateX(200);
+                slot2.setTranslateY(150);
+
+                s1.setTranslateX(250);
+                s1.setTranslateY(100);
+                s2.setTranslateX(250);
+                s2.setTranslateY(150);
+
+                action.setTranslateY(200);
+                a.setTranslateY(200);
+                save.setTranslateY(250);
+                secondaryLayout.getChildren().addAll(slot1,slot2,s1,s2);
+                break;
+
+            case 3:
+
+                slot1.setTranslateX(200);
+                slot1.setTranslateY(100);
+                slot2.setTranslateX(200);
+                slot2.setTranslateY(150);
+                slot3.setTranslateX(200);
+                slot3.setTranslateY(200);
+
+                s1.setTranslateX(250);
+                s1.setTranslateY(100);
+                s2.setTranslateX(250);
+                s2.setTranslateY(150);
+                s3.setTranslateX(250);
+                s3.setTranslateY(200);
+
+                action.setTranslateY(250);
+                a.setTranslateY(250);
+                save.setTranslateY(300);
+                secondaryLayout.getChildren().addAll(slot1,slot2,slot3,s1,s2,s3);
+                break;
+        }
+
+        action.setVisible(true);
+        a.setVisible(true);
+        save.setVisible(true);
     }
 }
+
