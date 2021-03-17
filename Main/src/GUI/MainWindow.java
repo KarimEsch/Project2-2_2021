@@ -16,6 +16,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -25,6 +26,7 @@ import java.util.Date;
 
 public class MainWindow extends Application {
 
+    //FaceDetection face = new FaceDetection();
     Group pane = new Group();
     Group secondaryLayout = new Group();
     Scene scene = new Scene(pane, 1000, 600);
@@ -51,14 +53,19 @@ public class MainWindow extends Application {
     Button save = new Button("Save");
     TextField q = new TextField();
     Label action = new Label("Action : ");
+    Label namefile = new Label("Save file as : ");
     TextField a = new TextField();
     TextField s1 = new TextField();
     TextField s2 = new TextField();
     TextField s3 = new TextField();
+    ComboBox name = new ComboBox();
     TextArea chat = new TextArea("Chat with your Personal Assistant \n");
+
+
 
     @Override
     public void start(Stage primaryStage) throws IOException {
+
 
         //Text CurrentTime = new Text(dtf.format(now));
         CurrentTime.setFill(Color.WHITE);
@@ -90,6 +97,12 @@ public class MainWindow extends Application {
 
         imageView2.setFitHeight(500);
         imageView2.setFitWidth(500);
+
+        name.setTranslateX(250);
+        name.setPrefSize(190,20);
+        name.setEditable(true);
+        namefile.setTranslateX(150);
+        save.setTranslateX(465);
 
         pane.getChildren().add(imageView1);
         pane.getChildren().add(imageView2);
@@ -129,36 +142,35 @@ public class MainWindow extends Application {
                 }
         );
 
-        newSkill.setOnAction((event) -> {
+        try {
+            File f = new File("Main/res/skills");
+            for (int i = 0; i < f.list().length; i++) {
+                String str = f.list()[i];
+                String strNew = str.substring(0, str.length() - 4);
+                name.getItems().add(strNew);
+            }
+        }catch(Exception e){
+            System.out.println(e);
+        }
 
+        newSkill.setOnAction((event) -> {
                     question.setTranslateX(10);
                     question.setTranslateY(50);
                     q.setTranslateX(100);
                     q.setTranslateY(50);
                     q.setPrefWidth(500);
-
                     q.setOnKeyPressed(e -> {
                         if (e.getCode().equals(KeyCode.ENTER)) {
                             newWindow.setHeight(400);
-                            countArrow(q.getText(), secondaryLayout, save, action, a, s1, s2, s3);
+                            countArrow(q.getText(), secondaryLayout, save, action, a, s1, s2, s3, namefile, name);
                         }
                     });
-
-
-                    action.setVisible(false);
                     action.setTranslateX(10);
-                    a.setVisible(false);
                     a.setTranslateX(100);
                     a.setPrefWidth(500);
 
-                    save.setTranslateX(300);
-                    save.setVisible(false);
-
                     secondaryLayout.getChildren().add(question);
-                    secondaryLayout.getChildren().add(action);
                     secondaryLayout.getChildren().add(q);
-                    secondaryLayout.getChildren().add(a);
-                    secondaryLayout.getChildren().add(save);
 
                     newWindow.setTitle("New skill");
                     newWindow.setScene(secondScene);
@@ -170,10 +182,12 @@ public class MainWindow extends Application {
 
         save.setOnAction(E -> {
             try {
-                FileWriter myfile = new FileWriter("Main/res/newSkills.txt",true);
+                String filename = (String) name.getValue();
+                FileWriter myfile = new FileWriter("Main/res/skills/"+filename+".txt");
                 myfile.write(s1.getText()+" "+s2.getText()+" "+s3.getText()+" "+ a.getText()+"\n");
                 myfile.close();
                 System.out.println("Successfully wrote to the file.");
+                name.getItems().add(filename);
             } catch (IOException e) {
                 System.out.println("An error occurred.");
             }
@@ -199,7 +213,6 @@ public class MainWindow extends Application {
 
         ask.setTranslateX(199);
         ask.setTranslateY(465);
-        //ask.setStyle("-fx-background-color: #9a989f; ");
         ask.setOnAction((event) -> {
             pane.getChildren().remove(ask);
             pane.getChildren().add(loadSkills);
@@ -245,38 +258,32 @@ public class MainWindow extends Application {
 
     }
 
-    //Counts the number of slots required and makes that number of labels and text fields.
-    public static void countArrow(String text, Group secondaryLayout, Button save, Label action, TextField a, TextField s1, TextField s2, TextField s3) {
+    public static void countArrow(String text, Group secondaryLayout, Button save, Label action, TextField a, TextField s1, TextField s2, TextField s3, Label namefile, ComboBox name) {
         int count = 0;
-
         for (int i = 0; i < text.length(); i++) {
             if (text.charAt(i) == '<' || text.charAt(i) == '>')
                 count++;
-            //System.out.println(count);
         }
-
         if (count % 2 == 0) {
             count = count / 2;
-            //System.out.println(count);
         }
+
         Label slot1 = new Label("Slot1 : ");
         Label slot2 = new Label("Slot2 : ");
         Label slot3 = new Label("Slot3 : ");
-
-
 
         switch(count){
             case 1:
                 slot1.setTranslateX(200);
                 slot1.setTranslateY(100);
-
                 s1.setTranslateX(250);
                 s1.setTranslateY(100);
-
                 action.setTranslateY(150);
                 a.setTranslateY(150);
+                name.setTranslateY(200);
+                namefile.setTranslateY(205);
                 save.setTranslateY(200);
-                secondaryLayout.getChildren().addAll(slot1,s1);
+                secondaryLayout.getChildren().addAll(slot1,s1,save,action,a,name,namefile);
                 break;
 
             case 2:
@@ -284,44 +291,38 @@ public class MainWindow extends Application {
                 slot1.setTranslateY(100);
                 slot2.setTranslateX(200);
                 slot2.setTranslateY(150);
-
                 s1.setTranslateX(250);
                 s1.setTranslateY(100);
                 s2.setTranslateX(250);
                 s2.setTranslateY(150);
-
                 action.setTranslateY(200);
                 a.setTranslateY(200);
+                name.setTranslateY(250);
+                namefile.setTranslateY(255);
                 save.setTranslateY(250);
-                secondaryLayout.getChildren().addAll(slot1,slot2,s1,s2);
+                secondaryLayout.getChildren().addAll(slot1,slot2,s1,s2,save,action,a,name,namefile);
                 break;
 
             case 3:
-
                 slot1.setTranslateX(200);
                 slot1.setTranslateY(100);
                 slot2.setTranslateX(200);
                 slot2.setTranslateY(150);
                 slot3.setTranslateX(200);
                 slot3.setTranslateY(200);
-
                 s1.setTranslateX(250);
                 s1.setTranslateY(100);
                 s2.setTranslateX(250);
                 s2.setTranslateY(150);
                 s3.setTranslateX(250);
                 s3.setTranslateY(200);
-
                 action.setTranslateY(250);
                 a.setTranslateY(250);
+                name.setTranslateY(300);
+                namefile.setTranslateY(305);
                 save.setTranslateY(300);
-                secondaryLayout.getChildren().addAll(slot1,slot2,slot3,s1,s2,s3);
+                secondaryLayout.getChildren().addAll(slot1,slot2,slot3,s1,s2,s3,save,action,a,name,namefile);
                 break;
         }
-
-        action.setVisible(true);
-        a.setVisible(true);
-        save.setVisible(true);
     }
 }
-
