@@ -16,10 +16,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -188,6 +185,7 @@ public class MainWindow extends Application {
                 myfile.close();
                 System.out.println("Successfully wrote to the file.");
                 name.getItems().add(filename);
+                Skill newSkill = new Skill(new File("Main/res/skills/" + filename + ".txt"), filename);
             } catch (IOException e) {
                 System.out.println("An error occurred.");
             }
@@ -207,7 +205,12 @@ public class MainWindow extends Application {
             if (ke.getCode().equals(KeyCode.ENTER)) {
                 System.out.println("You entered a request");
                 String text = da.getText();
-                processor.digitalproceed(text, chat);
+                processor.proceed(text, chat);
+                try {
+                    processor.digitalproceed(text, chat);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
