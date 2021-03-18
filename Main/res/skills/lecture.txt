@@ -1,0 +1,23 @@
+Which lectures are there on <DAY> at <TIME>?
+
+Monday 09:00 On Monday at 9 AM, you have got a lecture in Mathematical Modeling.
+Monday 11:00 On Monday at 11 AM, you have got a lecture in Theoretical Computer Science.
+Monday 13:00 On Monday at 1 PM, you do not have any lectures.
+Tuesday 09:00 On Tuesday at 9 AM, you have got a lecture in Theoretical Computer Science.
+Tuesday 11:00 On Tuesday at 11 AM, you have got a lecture in Mathematical Modeling.
+Tuesday 13:00 On Tuesday at 1 PM, you have got a lecture in Human Computer Inter. & Affect Comp.
+Wednesday 09:00 On Wednesday at 9 AM, you do not have any lectures.
+Wednesday 11:00 On Wednesday at 11 AM, you do not have any lectures.
+Wednesday 13:00 On Wednesday at 1 PM, you do not have any lectures.
+Thursday 09:00 On Thursday at 9 AM, you do not have any lectures.
+Thursday 11:00 On Thursday at 11 AM, you have got a very important project meeting.
+Thursday 13:00 On Thursday at 1 PM, you do not have any lectures.
+Friday 09:00 On Friday at 9 AM, you have got a lecture in Mathematical Modeling.
+Friday 11:00 On Friday at 11 AM, you are free.
+Friday 13:00 On Friday at 1 PM, you have got a lecture in Human Computer Inter. & Affect Comp.
+Saturday 09:00 You're free on Saturdays, enjoy your weekend!
+Saturday 11:00 You're free on Saturdays, enjoy your weekend!
+Saturday 13:00 You're free on Saturdays, enjoy your weekend!
+Sunday 09:00 You're free on Sundays, enjoy your weekend!
+Sunday 11:00 You're free on Sundays, enjoy your weekend!
+Sunday 13:00 You're free on Sundays, enjoy your weekend!
