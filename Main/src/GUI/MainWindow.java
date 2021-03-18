@@ -1,6 +1,7 @@
 package GUI;
 
 
+import Processing.JSONReadFromFile;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Group;
@@ -35,6 +36,7 @@ public class MainWindow extends Application {
     Processor processor = new Processor();
     Skills currentSkills = new Skills();
 
+    JSONReadFromFile reader = new JSONReadFromFile("currentActivities");
 
     Image image1;
     Image image2;
@@ -139,6 +141,7 @@ public class MainWindow extends Application {
         loadSkills.setOnAction((event) -> {
                     currentSkills.readCurrentSkills();
                     currentSkills.getCurrentSkills();
+                    reader.parseSkills();
                 }
         );
 
@@ -200,14 +203,21 @@ public class MainWindow extends Application {
             if (ke.getCode().equals(KeyCode.ENTER)) {
                 System.out.println("You entered a request");
                 String text = request.getText();
-                processor.proceed(text, chat);
+                processor.proceedUser(text, chat);
             }
         });
         da.setOnKeyPressed(ke -> {
             if (ke.getCode().equals(KeyCode.ENTER)) {
                 System.out.println("You entered a request");
                 String text = da.getText();
-                processor.digitalproceed(text, chat);
+                processor.proceedUser(text, chat);
+                String answer = null;
+                try {
+                    answer = reader.matching(text);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                processor.proceedAssistant(answer, chat);
             }
         });
 

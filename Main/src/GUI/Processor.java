@@ -12,15 +12,15 @@ public class Processor {
     public Processor(){
 
     }
-    public void proceed(String text, TextArea area){
+    public void proceedUser(String text, TextArea area){
         System.out.println("proceeding");
         //area.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
-        area.appendText("\n>" + "USER :- "  + text);
+        area.appendText("\n>" + "USER :- "  + text +"\n");
     }
-     public void digitalproceed(String text, TextArea area){
+     public void proceedAssistant(String text, TextArea area){
          System.out.println(" Digital assistant proceeding");
          //area.setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
-         area.appendText("\n>" + "ASSISTANT :- "  + text);
+         area.appendText("\n>" + "ASSISTANT :- "  + text +"\n");
      }
 }
 
