@@ -1,22 +1,23 @@
-[
+{"activities" : [
   {
-    "time": "<TIME>",
-    "day": "<DAY>",
+    "time": "9",
+    "day": "Monday",
     "answer": "You have Statistics Course at 9 on Monday"
   },
   {
-    "time": "<TIME>",
-    "day": "<DAY>",
-    "answer": "You have Statistics Course at 9 on Monday"
+    "time": "11",
+    "day": "Tuesday",
+    "answer": "You have Gym at 11 on Tuesday"
   },
   {
-    "time": "<TIME>",
-    "day": "<DAY>",
-    "answer": "You have Statistics Course at 9 on Monday"
+    "time": "13",
+    "day": "Thursday",
+    "answer": "You have RES Course at 13 on Thursday"
   },
   {
-    "time": "<TIME>",
-    "day": "<DAY>",
-    "answer": "You have Statistics Course at 9 on Monday"
+    "time": "9",
+    "day": "Friday",
+    "answer": "You have ProjectMeeting at 9 on Monday with Katharina"
   }
 ]
+}
