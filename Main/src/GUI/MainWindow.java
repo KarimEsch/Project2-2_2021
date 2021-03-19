@@ -4,12 +4,15 @@ package GUI;
 import Processing.JSONReadFromFile;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.FontWeight;
@@ -23,6 +26,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import static Processing.JSONWriteInFile.appendActivity;
 
 
 public class MainWindow extends Application {
@@ -49,19 +54,20 @@ public class MainWindow extends Application {
     Button saveSkills = new Button("Save skill");
     Button newSkill = new Button("New Skill");
     TextField request = new TextField();
-    TextField da = new TextField();
+    TextField you_entered_a_request = new TextField();
 
     Label question = new Label("Question : ");
     Button save = new Button("Save");
-    TextField q = new TextField();
+    TextField question_field = new TextField();
     Label action = new Label("Action : ");
     Label namefile = new Label("Save file as : ");
-    TextField a = new TextField();
-    TextField s1 = new TextField();
-    TextField s2 = new TextField();
-    TextField s3 = new TextField();
+    TextField user_skill_input = new TextField();
+    TextField skill_code1 = new TextField();
+    TextField skill_code2 = new TextField();
+    TextField skill_code3 = new TextField();
     ComboBox name = new ComboBox();
     TextArea chat = new TextArea("Chat with your Personal Assistant \n");
+    TextArea currentSkillsDisplayed = new TextArea();
 
 
 
@@ -117,9 +123,9 @@ public class MainWindow extends Application {
         InputText.setFill(Color.GRAY);
         InputText.setOpacity(0.7);
 
-        da.setTranslateX(680);
-        da.setTranslateY(493);
-        da.setPromptText("Digital assistant reply");
+        you_entered_a_request.setTranslateX(680);
+        you_entered_a_request.setTranslateY(493);
+        you_entered_a_request.setPromptText("Digital assistant reply");
 
         //Chat Area
         chat.setOpacity(0.85);
@@ -142,6 +148,24 @@ public class MainWindow extends Application {
                     currentSkills.readCurrentSkills();
                     currentSkills.getCurrentSkills();
                     reader.parseSkills();
+                    Stage LoadSkillsStage = new Stage();
+
+                    VBox box = new VBox();
+                    box.setPadding(new Insets(10));
+
+                    // How to center align content in a layout manager in JavaFX
+                    box.setAlignment(Pos.CENTER);
+                    Label label = new Label("Enter username and password");
+
+                    currentSkillsDisplayed.setMinHeight(450);
+                    currentSkillsDisplayed.setMaxWidth(450);
+                    currentSkillsDisplayed=processor.readFromFileIntoTextArea("Main/res/currentSkills.csv");
+
+                    box.getChildren().add(label);
+                    box.getChildren().add(currentSkillsDisplayed);
+                    Scene scene = new Scene(box, 500, 500);
+                    LoadSkillsStage.setScene(scene);
+                    LoadSkillsStage.show();
                 }
         );
 
@@ -159,21 +183,21 @@ public class MainWindow extends Application {
         newSkill.setOnAction((event) -> {
                     question.setTranslateX(10);
                     question.setTranslateY(50);
-                    q.setTranslateX(100);
-                    q.setTranslateY(50);
-                    q.setPrefWidth(500);
-                    q.setOnKeyPressed(e -> {
+                    question_field.setTranslateX(100);
+                    question_field.setTranslateY(50);
+                    question_field.setPrefWidth(500);
+                    question_field.setOnKeyPressed(e -> {
                         if (e.getCode().equals(KeyCode.ENTER)) {
                             newWindow.setHeight(400);
-                            countArrow(q.getText(), secondaryLayout, save, action, a, s1, s2, s3, namefile, name);
+                            countArrow(question_field.getText(), secondaryLayout, save, action, user_skill_input, skill_code1, skill_code2, skill_code3, namefile, name);
                         }
                     });
                     action.setTranslateX(10);
-                    a.setTranslateX(100);
-                    a.setPrefWidth(500);
+                    user_skill_input.setTranslateX(100);
+                    user_skill_input.setPrefWidth(500);
 
                     secondaryLayout.getChildren().add(question);
-                    secondaryLayout.getChildren().add(q);
+                    secondaryLayout.getChildren().add(question_field);
 
                     newWindow.setTitle("New skill");
                     newWindow.setScene(secondScene);
@@ -187,7 +211,7 @@ public class MainWindow extends Application {
             try {
                 String filename = (String) name.getValue();
                 FileWriter myfile = new FileWriter("Main/res/skills/"+filename+".txt");
-                myfile.write(s1.getText()+" "+s2.getText()+" "+s3.getText()+" "+ a.getText()+"\n");
+                myfile.write(skill_code1.getText()+" "+ skill_code2.getText()+" "+ skill_code3.getText()+" "+ user_skill_input.getText()+"\n");
                 myfile.close();
                 System.out.println("Successfully wrote to the file.");
                 name.getItems().add(filename);
@@ -206,10 +230,10 @@ public class MainWindow extends Application {
                 processor.proceedUser(text, chat);
             }
         });
-        da.setOnKeyPressed(ke -> {
+        you_entered_a_request.setOnKeyPressed(ke -> {
             if (ke.getCode().equals(KeyCode.ENTER)) {
                 System.out.println("You entered a request");
-                String text = da.getText();
+                String text = you_entered_a_request.getText().toLowerCase();
                 processor.proceedUser(text, chat);
                 String answer = null;
                 try {
@@ -218,6 +242,10 @@ public class MainWindow extends Application {
                     e.printStackTrace();
                 }
                 processor.proceedAssistant(answer, chat);
+                if (text.contains("add activity :")){
+                    appendActivity(text);
+                    processor.proceedAssistant("Your activity was perfectly added to your coming activities", chat);
+                }
             }
         });
 
@@ -231,7 +259,7 @@ public class MainWindow extends Application {
             pane.getChildren().add(request);
             pane.getChildren().add(chat);
             pane.getChildren().add(InputText);
-            pane.getChildren().add(da);
+            pane.getChildren().add(you_entered_a_request);
 
         });
 

@@ -1,6 +1,12 @@
 package Processing;
 
+import com.google.gson.annotations.Expose;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Activities {
+    @Expose
     public String time;
     public String day;
     public String answer;
@@ -26,5 +32,32 @@ public class Activities {
     public String getAnswer(){
         return this.answer;
     }
+    public String getDay(){
+        return this.day;
+    }
+    public String getTime(){
+        return this.time;
+    }
+    public void setTime(String time){
+        this.time=time;
+    }
+    public void setDay(String day){
+        this.day=day;
+    }
+    public void setAnswer(String answer){
+        this.answer=answer;
+    }
 
+}
+class Activitiess {
+    @Expose
+    List<Activities> activities = new ArrayList<>();
+
+    public List<Activities> getActivity() {
+        return activities;
+    }
+
+    public void addActivity(Activities activity) {
+        this.activities.add(activity);
+    }
 }

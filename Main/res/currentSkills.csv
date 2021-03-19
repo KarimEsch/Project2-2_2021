@@ -1,4 +1,12 @@
-Question    Which lectures are there on <DAY> at <TIME>
+
+ACTIVITY SKILLS :
+
+(if you want to add an activity in your calendar follow that pattern)
+_"add activity : <Activity> on <DAY> at <TIME>"
+
+(if you want to ask about an activity in your calendar follow that pattern)
+_" Which activity is there on <DAY> at <TIME>"
+
 Slot   <DAY>  Monday
 Slot   <DAY>  Tuesday
 Slot   <DAY>  Wednesday
@@ -12,6 +20,4 @@ Slot   <TIME> 15
 Action <DAY>  Saturday   There are no lectures on Saturday
 Action <DAY>  Monday <TIME> 9  We start the week with math
 Action <DAY>  Monday <TIME> 11 On Monday noon we have Theoritical Computer Science
-Action I have no idea
 
-d
