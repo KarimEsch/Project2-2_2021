@@ -4,6 +4,7 @@ package GUI;
 import Processing.JSONReadFromFile;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -17,13 +18,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -50,10 +50,9 @@ public class MainWindow extends Application {
     Rectangle InputText = new Rectangle();
 
     Button ask = new Button("Interact With your Assistant");
-    Button loadSkills = new Button("Load skill");
-    Button saveSkills = new Button("Save skill");
+    Button loadSkills = new Button("Known skills");
+    Button loadSkillData = new Button("Load");
     Button newSkill = new Button("New Skill");
-    TextField request = new TextField();
     TextField you_entered_a_request = new TextField();
 
     Label question = new Label("Question : ");
@@ -68,7 +67,6 @@ public class MainWindow extends Application {
     ComboBox name = new ComboBox();
     TextArea chat = new TextArea("Chat with your Personal Assistant \n");
     TextArea currentSkillsDisplayed = new TextArea();
-
 
 
     @Override
@@ -91,7 +89,6 @@ public class MainWindow extends Application {
         ImageView imageView1 = new ImageView(image1);
         ImageView imageView2 = new ImageView(image2);
 
-
         //Setting the position of the image
         imageView1.setX(0);
         imageView1.setY(0);
@@ -107,7 +104,7 @@ public class MainWindow extends Application {
         imageView2.setFitWidth(500);
 
         name.setTranslateX(250);
-        name.setPrefSize(190,20);
+        name.setPrefSize(190, 20);
         name.setEditable(true);
         namefile.setTranslateX(150);
         save.setTranslateX(465);
@@ -125,7 +122,7 @@ public class MainWindow extends Application {
 
         you_entered_a_request.setTranslateX(680);
         you_entered_a_request.setTranslateY(493);
-        you_entered_a_request.setPromptText("Digital assistant reply");
+        you_entered_a_request.setPromptText("Say something . . .");
 
         //Chat Area
         chat.setOpacity(0.85);
@@ -135,14 +132,11 @@ public class MainWindow extends Application {
         chat.setMaxHeight(500);
         chat.setMaxWidth(400);
 
-        //Button to load/save/new skills
-        loadSkills.setTranslateX(120);
+        //Button to load/add new skills
+        loadSkills.setTranslateX(187);
         loadSkills.setTranslateY(500);
-        saveSkills.setTranslateX(400);
-        saveSkills.setTranslateY(500);
-        newSkill.setTranslateX(260);
-        newSkill.setTranslateY(550);
-        saveSkills.setOnAction((event) -> currentSkills.writeSkill(request.getText()));
+        newSkill.setTranslateX(330);
+        newSkill.setTranslateY(500);
 
         loadSkills.setOnAction((event) -> {
                     currentSkills.readCurrentSkills();
@@ -159,7 +153,7 @@ public class MainWindow extends Application {
 
                     currentSkillsDisplayed.setMinHeight(450);
                     currentSkillsDisplayed.setMaxWidth(450);
-                    currentSkillsDisplayed=processor.readFromFileIntoTextArea("Main/res/currentSkills.csv");
+                    currentSkillsDisplayed = processor.readFromFileIntoTextArea("Main/res/currentSkills.csv");
 
                     box.getChildren().add(label);
                     box.getChildren().add(currentSkillsDisplayed);
@@ -176,11 +170,28 @@ public class MainWindow extends Application {
                 String strNew = str.substring(0, str.length() - 4);
                 name.getItems().add(strNew);
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             System.out.println(e);
         }
 
+        loadSkillData.setOnAction((event) -> {
+                    FileChooser chooser = new FileChooser();
+                    chooser.setInitialDirectory(new File(System.getProperty("user.dir")));
+                    File selectedFile = chooser.showOpenDialog(newWindow);
+                    if (selectedFile == null) {
+                        System.out.println("No file was selected");
+                    } else
+                        try {
+                            readFile(selectedFile);
+                        } catch (IOException e) {
+                            System.out.println("No file selected");
+                        }
+                }
+        );
+
         newSkill.setOnAction((event) -> {
+                    loadSkillData.setTranslateX(300);
+                    loadSkillData.setTranslateY(10);
                     question.setTranslateX(10);
                     question.setTranslateY(50);
                     question_field.setTranslateX(100);
@@ -198,6 +209,7 @@ public class MainWindow extends Application {
 
                     secondaryLayout.getChildren().add(question);
                     secondaryLayout.getChildren().add(question_field);
+                    secondaryLayout.getChildren().add(loadSkillData);
 
                     newWindow.setTitle("New skill");
                     newWindow.setScene(secondScene);
@@ -210,8 +222,8 @@ public class MainWindow extends Application {
         save.setOnAction(E -> {
             try {
                 String filename = (String) name.getValue();
-                FileWriter myfile = new FileWriter("Main/res/skills/"+filename+".txt");
-                myfile.write(skill_code1.getText()+" "+ skill_code2.getText()+" "+ skill_code3.getText()+" "+ user_skill_input.getText()+"\n");
+                FileWriter myfile = new FileWriter("Main/res/skills/" + filename + ".txt");
+                myfile.write("q:" + question_field.getText() + "\ns1:" + skill_code1.getText() + "\ns2:" + skill_code2.getText() + "\ns3:" + skill_code3.getText() + "\na:" + user_skill_input.getText() + "\n");
                 myfile.close();
                 System.out.println("Successfully wrote to the file.");
                 name.getItems().add(filename);
@@ -219,22 +231,12 @@ public class MainWindow extends Application {
                 System.out.println("An error occurred.");
             }
         });
-
-        request.setPromptText("Load or Save Skills ...");
-        request.setTranslateX(207);
-        request.setTranslateY(500);
-        request.setOnKeyPressed(ke -> {
-            if (ke.getCode().equals(KeyCode.ENTER)) {
-                System.out.println("You entered a request");
-                String text = request.getText();
-                processor.proceedUser(text, chat);
-            }
-        });
         you_entered_a_request.setOnKeyPressed(ke -> {
             if (ke.getCode().equals(KeyCode.ENTER)) {
                 System.out.println("You entered a request");
-                String text = you_entered_a_request.getText().toLowerCase();
+                String text = you_entered_a_request.getText();
                 processor.proceedUser(text, chat);
+                text = text.toLowerCase();
                 String answer = null;
                 try {
                     answer = reader.matching(text);
@@ -242,25 +244,22 @@ public class MainWindow extends Application {
                     e.printStackTrace();
                 }
                 processor.proceedAssistant(answer, chat);
-                if (text.contains("add activity :")){
+                if (text.contains("add activity :")) {
                     appendActivity(text);
                     processor.proceedAssistant("Your activity was perfectly added to your coming activities", chat);
                 }
             }
         });
 
-        ask.setTranslateX(199);
-        ask.setTranslateY(465);
+        ask.setTranslateX(215);
+        ask.setTranslateY(500);
         ask.setOnAction((event) -> {
             pane.getChildren().remove(ask);
             pane.getChildren().add(loadSkills);
-            pane.getChildren().add(saveSkills);
             pane.getChildren().add(newSkill);
-            pane.getChildren().add(request);
             pane.getChildren().add(chat);
             pane.getChildren().add(InputText);
             pane.getChildren().add(you_entered_a_request);
-
         });
 
 
@@ -293,7 +292,36 @@ public class MainWindow extends Application {
         });
         timerThread.start();//start the thread and its ok
 
+    }
 
+    public void readFile(File skillFile) throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(skillFile));
+        String str = "";
+        while ((str = br.readLine()) != null) {
+            String currentString = "";
+            int i = 0;
+            while (str.charAt(i) != ':') {
+                i++;
+                currentString += str.charAt(i - 1);
+            }
+            switch (currentString) {
+                case "q":
+                    question_field.setText(str.substring(i + 1));
+                    break;
+                case "s1":
+                    skill_code1.setText(str.substring(i + 1));
+                    break;
+                case "s2":
+                    skill_code2.setText(str.substring(i + 1));
+                    break;
+                case "s3":
+                    skill_code3.setText(str.substring(i + 1));
+                    break;
+                case "a":
+                    user_skill_input.setText(str.substring(i + 1));
+                    break;
+            }
+        }
     }
 
     public static void countArrow(String text, Group secondaryLayout, Button save, Label action, TextField a, TextField s1, TextField s2, TextField s3, Label namefile, ComboBox name) {
@@ -310,7 +338,7 @@ public class MainWindow extends Application {
         Label slot2 = new Label("Slot2 : ");
         Label slot3 = new Label("Slot3 : ");
 
-        switch(count){
+        switch (count) {
             case 1:
                 slot1.setTranslateX(200);
                 slot1.setTranslateY(100);
@@ -321,7 +349,7 @@ public class MainWindow extends Application {
                 name.setTranslateY(200);
                 namefile.setTranslateY(205);
                 save.setTranslateY(200);
-                secondaryLayout.getChildren().addAll(slot1,s1,save,action,a,name,namefile);
+                secondaryLayout.getChildren().addAll(slot1, s1, save, action, a, name, namefile);
                 break;
 
             case 2:
@@ -338,7 +366,7 @@ public class MainWindow extends Application {
                 name.setTranslateY(250);
                 namefile.setTranslateY(255);
                 save.setTranslateY(250);
-                secondaryLayout.getChildren().addAll(slot1,slot2,s1,s2,save,action,a,name,namefile);
+                secondaryLayout.getChildren().addAll(slot1, slot2, s1, s2, save, action, a, name, namefile);
                 break;
 
             case 3:
@@ -359,7 +387,7 @@ public class MainWindow extends Application {
                 name.setTranslateY(300);
                 namefile.setTranslateY(305);
                 save.setTranslateY(300);
-                secondaryLayout.getChildren().addAll(slot1,slot2,slot3,s1,s2,s3,save,action,a,name,namefile);
+                secondaryLayout.getChildren().addAll(slot1, slot2, slot3, s1, s2, s3, save, action, a, name, namefile);
                 break;
         }
     }
