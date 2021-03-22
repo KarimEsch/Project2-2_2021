@@ -33,6 +33,7 @@ import static Processing.JSONWriteInFile.appendActivity;
 public class MainWindow extends Application {
 
     //FaceDetection face = new FaceDetection();
+    ArrayList<TextField> slotfields = new ArrayList<TextField>();
     Group pane = new Group();
     Group secondaryLayout = new Group();
     Scene scene = new Scene(pane, 1000, 600);
@@ -61,9 +62,6 @@ public class MainWindow extends Application {
     Label action = new Label("Action : ");
     Label namefile = new Label("Save file as : ");
     TextField user_skill_input = new TextField();
-    TextField skill_code1 = new TextField();
-    TextField skill_code2 = new TextField();
-    TextField skill_code3 = new TextField();
     ComboBox name = new ComboBox();
     TextArea chat = new TextArea("Chat with your Personal Assistant \n");
     TextArea currentSkillsDisplayed = new TextArea();
@@ -200,7 +198,7 @@ public class MainWindow extends Application {
                     question_field.setOnKeyPressed(e -> {
                         if (e.getCode().equals(KeyCode.ENTER)) {
                             newWindow.setHeight(400);
-                            countArrow(question_field.getText(), secondaryLayout, save, action, user_skill_input, skill_code1, skill_code2, skill_code3, namefile, name);
+                            countArrow(question_field.getText(), secondaryLayout, save, action, user_skill_input, namefile, name, slotfields);
                         }
                     });
                     action.setTranslateX(10);
@@ -222,8 +220,14 @@ public class MainWindow extends Application {
         save.setOnAction(E -> {
             try {
                 String filename = (String) name.getValue();
-                FileWriter myfile = new FileWriter("Main/res/skills/" + filename + ".txt");
-                myfile.write("q:" + question_field.getText() + "\ns1:" + skill_code1.getText() + "\ns2:" + skill_code2.getText() + "\ns3:" + skill_code3.getText() + "\na:" + user_skill_input.getText() + "\n");
+                FileWriter myfile = new FileWriter("Main/res/skills/"+filename+".txt",true);
+                for(int i=0; i<slotfields.size(); i++){
+                    myfile.write(slotfields.get(i).getText()+" ");
+                    slotfields.get(i).setText("");
+                }
+                question_fieldw.setText("");
+                myfile.write(user_skill_input.getText()+"\n");
+                user_skill_input.setText("");
                 myfile.close();
                 System.out.println("Successfully wrote to the file.");
                 name.getItems().add(filename);
@@ -324,7 +328,7 @@ public class MainWindow extends Application {
         }
     }
 
-    public static void countArrow(String text, Group secondaryLayout, Button save, Label action, TextField a, TextField s1, TextField s2, TextField s3, Label namefile, ComboBox name) {
+    public static void countArrow(String text, Group secondaryLayout, Button save, Label action, TextField user_skill_input, Label namefile, ComboBox name, ArrayList<TextField> slotfields) {
         int count = 0;
         for (int i = 0; i < text.length(); i++) {
             if (text.charAt(i) == '<' || text.charAt(i) == '>')
@@ -333,62 +337,24 @@ public class MainWindow extends Application {
         if (count % 2 == 0) {
             count = count / 2;
         }
-
-        Label slot1 = new Label("Slot1 : ");
-        Label slot2 = new Label("Slot2 : ");
-        Label slot3 = new Label("Slot3 : ");
-
-        switch (count) {
-            case 1:
-                slot1.setTranslateX(200);
-                slot1.setTranslateY(100);
-                s1.setTranslateX(250);
-                s1.setTranslateY(100);
-                action.setTranslateY(150);
-                a.setTranslateY(150);
-                name.setTranslateY(200);
-                namefile.setTranslateY(205);
-                save.setTranslateY(200);
-                secondaryLayout.getChildren().addAll(slot1, s1, save, action, a, name, namefile);
-                break;
-
-            case 2:
-                slot1.setTranslateX(200);
-                slot1.setTranslateY(100);
-                slot2.setTranslateX(200);
-                slot2.setTranslateY(150);
-                s1.setTranslateX(250);
-                s1.setTranslateY(100);
-                s2.setTranslateX(250);
-                s2.setTranslateY(150);
-                action.setTranslateY(200);
-                a.setTranslateY(200);
-                name.setTranslateY(250);
-                namefile.setTranslateY(255);
-                save.setTranslateY(250);
-                secondaryLayout.getChildren().addAll(slot1, slot2, s1, s2, save, action, a, name, namefile);
-                break;
-
-            case 3:
-                slot1.setTranslateX(200);
-                slot1.setTranslateY(100);
-                slot2.setTranslateX(200);
-                slot2.setTranslateY(150);
-                slot3.setTranslateX(200);
-                slot3.setTranslateY(200);
-                s1.setTranslateX(250);
-                s1.setTranslateY(100);
-                s2.setTranslateX(250);
-                s2.setTranslateY(150);
-                s3.setTranslateX(250);
-                s3.setTranslateY(200);
-                action.setTranslateY(250);
-                a.setTranslateY(250);
-                name.setTranslateY(300);
-                namefile.setTranslateY(305);
-                save.setTranslateY(300);
-                secondaryLayout.getChildren().addAll(slot1, slot2, slot3, s1, s2, s3, save, action, a, name, namefile);
-                break;
+        int n = 0;
+        ArrayList<Label> slots = new ArrayList<Label>();
+        for(int i=1; i<=count; i++){
+            slotfields.add(new TextField());
+            slotfields.get(i-1).setTranslateX(250);
+            slotfields.get(i-1).setTranslateY(100+n);
+            slots.add(new Label("Slot"+i+" : "));
+            slots.get(i-1).setTranslateX(200);
+            slots.get(i-1).setTranslateY(100+n);
+            action.setTranslateY(150+n);
+            user_skill_input.setTranslateY(150+n);
+            name.setTranslateY(200+n);
+            namefile.setTranslateY(205+n);
+            save.setTranslateY(200+n);
+            n=n+50;
         }
+        secondaryLayout.getChildren().addAll(slots);
+        secondaryLayout.getChildren().addAll(slotfields);
+        secondaryLayout.getChildren().addAll(action,user_skill_input,name,namefile,save);
     }
 }
