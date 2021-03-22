@@ -225,7 +225,7 @@ public class MainWindow extends Application {
                     myfile.write(slotfields.get(i).getText()+" ");
                     slotfields.get(i).setText("");
                 }
-                question_fieldw.setText("");
+                question_field.setText("");
                 myfile.write(user_skill_input.getText()+"\n");
                 user_skill_input.setText("");
                 myfile.close();
