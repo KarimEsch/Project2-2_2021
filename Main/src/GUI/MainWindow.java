@@ -25,6 +25,7 @@ import javafx.stage.WindowEvent;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import static Processing.JSONWriteInFile.appendActivity;
@@ -41,6 +42,8 @@ public class MainWindow extends Application {
     Stage newWindow = new Stage();
     Processor processor = new Processor();
     Skills currentSkills = new Skills();
+
+    //FaceCamera faceCamera = new FaceCamera();
 
     JSONReadFromFile reader = new JSONReadFromFile("currentActivities");
 
@@ -268,6 +271,7 @@ public class MainWindow extends Application {
 
 
         pane.getChildren().add(ask);
+        //pane.getChildren().add(faceCamera.swingNode);
 
 
         primaryStage.setResizable(false);
@@ -313,12 +317,15 @@ public class MainWindow extends Application {
                     question_field.setText(str.substring(i + 1));
                     break;
                 case "s1":
+                    java.awt.Label skill_code1 = null;
                     skill_code1.setText(str.substring(i + 1));
                     break;
                 case "s2":
+                    java.awt.Label skill_code2 = null;
                     skill_code2.setText(str.substring(i + 1));
                     break;
                 case "s3":
+                    java.awt.Label skill_code3 = null;
                     skill_code3.setText(str.substring(i + 1));
                     break;
                 case "a":

@@ -14,10 +14,13 @@ import java.util.Iterator;
 import java.util.Locale;
 
 /**
- * @author Crunchify.com
+ * @author Karim Eschweiler
  * How to write JSON object to File in Java?
  */
 
+/*
+This class allows you to parse the user input and write into the JSON file.
+ */
 public class JSONWriteInFile {
     //private static FileWriter file;
     public static ArrayList linststring;

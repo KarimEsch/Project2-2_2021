@@ -1,7 +1,7 @@
 <component name="libraryTable">
-  <library name="javafx-sdk-12.0">
+  <library name="bridj-0.7.0">
     <CLASSES>
-      <root url="file://$PROJECT_DIR$/../javafx/javafx-sdk-12.0.2" />
+      <root url="jar://$PROJECT_DIR$/bridj-0.7.0.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

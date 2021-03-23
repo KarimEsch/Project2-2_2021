@@ -11,6 +11,12 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+/**
+ * @author Karim Eschweiler
+ * This class allows you to parse information from "activity.json" JSON file to see if there is any matching with
+ * user input and json activities.
+ */
+
 public class JSONReadFromFile
 {
     private final String file;
@@ -75,9 +81,7 @@ public class JSONReadFromFile
         return null;
 
     }
-    public String analyseSkill(String txt){
-        return null;
-    }
+
     public String matching(String txt) throws IOException {
         String txtLowerCase = txt.toLowerCase();
         String json= new String(Files.readAllBytes(Paths.get("currentActivities")));

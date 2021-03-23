@@ -19,5 +19,6 @@
     </orderEntry>
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.9.8" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.9.8" level="project" />
+    <orderEntry type="library" name="Maven: com.github.sarxos:webcam-capture:0.3.12" level="project" />
   </component>
 </module>
